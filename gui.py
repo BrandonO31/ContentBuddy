@@ -2,10 +2,7 @@ import dearpygui.dearpygui as dpg
 
 dpg.create_context()
 
-def start_Rec(sender, app_data, user_data):
-    print(f"Sender: {sender}")
-    print(f"App Data: {app_data}")
-    print(f"User Data: {user_data}")
+
 
 
 with dpg.window(label="Record", width=1000, height=1000):

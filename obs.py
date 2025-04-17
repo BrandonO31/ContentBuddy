@@ -11,6 +11,12 @@ class OBScontroller:
         ReqClient auto detects config.toml in same dir as main.py o.w. creates file & user must manually add password
         EventClient also
         """
+
+        #Global Variables
+
+        self.ep_num = 22
+
+
         project_root = Path().resolve()
         config_path = project_root / "config.toml"
 
@@ -54,7 +60,7 @@ class OBScontroller:
 
     def stop_recording(self):
         """
-        Stop OBS recording 
+        Stop OBS recording; all processes after recording is stopped are called here as well
         """
 
         try:
@@ -83,19 +89,22 @@ class OBScontroller:
     
     def video_file_handler(self):
         """
-        Rename most recent filepath OBS creates to customName.
+        Rename most recent filepath OBS creates to proper naming scheme.
         Try-Except block bypasses windows/obs file locking, ensuring file renames after windwows/obs is done with it
 
         """
+
+        
         old = Path(self.last_recording_path)
-        new = old.with_name("RoadTo2000Eloep##.mkv")
+        new = old.with_name(f"RoadTo2000Eloep{self.ep_num}.mkv")
 
         retries = 10
-        delay = 0.5
+        delay = 0.1
 
         for _ in range(retries):
             try:
                 old.rename(new)
+                self.increment_episode_number()
 
             except Exception as e:
                 print(e)
@@ -104,7 +113,16 @@ class OBScontroller:
 
         print("File Renaming Method Called")
 
-        pass
+        
+    def get_episode_number(self):
+
+        return self.ep_num
+    
+    def increment_episode_number(self):
+
+        self.ep_num += 1
+
+        
 
 
 

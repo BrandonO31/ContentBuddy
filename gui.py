@@ -9,11 +9,13 @@ class GUI:
         self.build_gui()
 
     def build_gui(self):
-        with dpg.window(label="Content Buddy"):
+        with dpg.window(label="Chess Videos"):
 
             with dpg.group(horizontal=True):
                 startRec = dpg.add_button(label="Start Rec" , callback=self.start_recording, user_data="Fake user data")
                 endRec = dpg.add_button(label="End Rec", callback=self.stop_recording, user_data="Fake user data") 
+            
+            dpg.add_text("Chess Video Ep#: 1", tag="episode_counter")
 
     """
     Callback Functions
@@ -24,7 +26,7 @@ class GUI:
 
     def run(self):
         
-        dpg.create_viewport(title='Content Buddy1', width= 1000, height = 800)
+        dpg.create_viewport(title='Content Buddy', width= 500, height = 500)
         self.dpg.setup_dearpygui()
         self.dpg.show_viewport()
         self.dpg.start_dearpygui()

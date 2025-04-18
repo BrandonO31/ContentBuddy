@@ -1,5 +1,8 @@
 import dearpygui.dearpygui as dpg
 import obs as obs
+import threading
+import time
+from automation import open_chess_website
 
 class GUI:
     def __init__(self, obs_controller):
@@ -16,12 +19,17 @@ class GUI:
                 startRec = dpg.add_button(label="Start Rec" , callback=self.start_recording, user_data="Fake user data")
                 endRec = dpg.add_button(label="End Rec", callback=self.stop_recording, user_data="Fake user data") 
             
+            dpg.add_button(label="Open Chess.com", callback = open_chess_website)
+            
             dpg.add_text(f"Chess Video Ep#:", tag="episode_counter")
+            dpg.add_text(tag="countdown_text")
 
     """
     Callback Functions
     """
-    def start_recording(self): self.obs.start_recording()
+    def start_recording(self): 
+        threading.Thread(target=self.countdown_and_start, args=(3,)).start()
+        # self.obs.start_recording()
 
     def stop_recording(self): 
         self.obs.stop_recording()
@@ -31,6 +39,16 @@ class GUI:
         
         episode_num = self.obs.get_episode_number()
         dpg.set_value("episode_counter" , f"Chess Video Ep#: {episode_num}")
+
+    
+    def countdown_and_start(self, count: int):
+        while count > 0:
+            dpg.set_value("countdown_text", f"Starting in {count}")
+            dpg.render_dearpygui_frame()  # Refresh the GUI
+            time.sleep(1)  # Wait for 1 second
+            count -= 1
+        dpg.set_value("countdown_text", "Recording started!")
+        self.obs.start_recording()
         
 
     def run(self):

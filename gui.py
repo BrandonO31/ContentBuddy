@@ -13,6 +13,9 @@ class GUI:
 
     def build_gui(self):
         
+        with dpg.font_registry():
+            default_font = dpg.add_font("assets\Typographica-Blp5.ttf", 20)
+
         with dpg.window(label="Chess Videos" , pos=(35, 50)):
 
             with dpg.group(horizontal=True):
@@ -52,6 +55,10 @@ class GUI:
 
         dpg.bind_item_theme(startRecButton , start_button_theme)
         dpg.bind_item_theme(stopRecButton , stop_button_theme)
+
+        dpg.bind_font(default_font)
+
+        
     
     """
     Callback Functions

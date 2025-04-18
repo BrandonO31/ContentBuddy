@@ -12,18 +12,47 @@ class GUI:
         self.build_gui()
 
     def build_gui(self):
-        self.num =111
-        with dpg.window(label="Chess Videos"):
+        
+        with dpg.window(label="Chess Videos" , pos=(35, 50)):
 
             with dpg.group(horizontal=True):
-                startRec = dpg.add_button(label="Start Rec" , callback=self.start_recording, user_data="Fake user data")
-                endRec = dpg.add_button(label="End Rec", callback=self.stop_recording, user_data="Fake user data") 
+                startRecButton = dpg.add_button(label="Start Rec" , callback=self.start_recording, user_data="Fake user data")
+                stopRecButton = dpg.add_button(label="Stop Rec", callback=self.stop_recording, user_data="Fake user data") 
             
             dpg.add_button(label="Open Chess.com", callback = open_chess_website)
             
             dpg.add_text(f"Chess Video Ep#:", tag="episode_counter")
             dpg.add_text(tag="countdown_text")
 
+        
+        # STYLING
+
+        with dpg.theme() as global_theme:
+
+            with dpg.theme_component(dpg.mvAll):
+                dpg.add_theme_color(dpg.mvThemeCol_FrameBg, (255, 0, 0), category=dpg.mvThemeCat_Core)
+                dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 1, category=dpg.mvThemeCat_Core)
+            
+        
+        with dpg.theme() as start_button_theme:
+
+            with dpg.theme_component(dpg.mvButton):
+                dpg.add_theme_color(dpg.mvThemeCol_Button, (34, 177, 76), category=dpg.mvThemeCat_Core)
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (28, 151, 64), category=dpg.mvThemeCat_Core)
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, (23, 124, 53), category=dpg.mvThemeCat_Core)
+        
+        with dpg.theme() as stop_button_theme:
+
+            with dpg.theme_component(dpg.mvButton):
+                dpg.add_theme_color(dpg.mvThemeCol_Button, (204, 51, 51), category=dpg.mvThemeCat_Core)
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (179, 45, 45), category=dpg.mvThemeCat_Core)
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, (153, 40, 40), category=dpg.mvThemeCat_Core)
+
+        dpg.bind_theme(global_theme)
+
+        dpg.bind_item_theme(startRecButton , start_button_theme)
+        dpg.bind_item_theme(stopRecButton , stop_button_theme)
+    
     """
     Callback Functions
     """
@@ -53,7 +82,7 @@ class GUI:
 
     def run(self):
         
-        dpg.create_viewport(title='Content Buddy', width= 250, height = 250)
+        dpg.create_viewport(title='Content Buddy', width= 250, height = 200)
         self.dpg.setup_dearpygui()
         self.dpg.show_viewport()
         self.dpg.start_dearpygui()

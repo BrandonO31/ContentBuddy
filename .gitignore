@@ -3,4 +3,4 @@ demo.py
 config.toml
 __pycache__/
 *.py[cod]
-
+database.db

@@ -20,9 +20,18 @@ def launch_obs():
         time.sleep(0.5)
         print("OBS is opening...")
 
+
+
 if __name__ == "__main__":
     launch_obs()
     obs = OBScontroller()
+
+    #CHECK IF USER HAS ALREADY CREATED ACCOUNT: 
+
+        #IF NOT: OPEN LOGIN GUI
+
+        #ELSE:
+        
     gui = GUI(obs)
     gui.run()
 

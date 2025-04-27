@@ -1,47 +1,96 @@
 import sqlite3
 
-def get_connection(db_name):
+def connect_db(db_name):
+    """
+    Returns connection object to interac w/ DB
+    """
     try:
         return sqlite3.connect(db_name)
     except Exception as e:
-        print (f"Error: {e}")
+        print(f"Error: {e}")
         raise
 
-def create_table(connection):
-    query = """
     
+
+def create_user_table(connection):
+    
+    """
+    Creates table for User
+    """
+
+    query = """
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL UNIQUE
+    )
     """
 
     try:
-        connection.execute(query)
-        print("Table 'users' created / already exists")
-
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+        print("User Table was created!")
     except Exception as e:
-        print(f"Error creating table: {e}")
+        print(f"User Table NOT created: {e}")
+    pass
 
-def insert_user(connection, username:str, age:int, email: str):
-    query = ""
+def create_video_series_table():
+    pass
+
+def initialize_db():
+    """
+    Function to be used elsewhere in program to initialize a connection with the DB & do whatever
+    """
+    pass
+
+def add_user(connection, username:str, password:str):
+    query = "INSERT INTO users (username, password) VALUES (?, ?)"
+
+    #LOGIC FOR VALID USERNAME & PASSWORD ...
 
     try:
         with connection:
-            
-            print(f"User: {username} was added to database!!")
+            cursor = connection.cursor()
+            cursor.execute(query, (username, password))
+        print(f"User: {username} has been added to the database!")
     except Exception as e:
         print(e)
+
+    
+
+def get_user_by_username(username):
+    pass
+
+def verify_user_login(username, password):
+    pass
+
+def add_video_series(user_id, series_name, episode_number):
+    pass
+
+def get_series_by_user(user_id):
+    pass
+
+def update_episode_number(series_id, new_episode_number):
+    pass
+
             
-    
-
-
-    
-
-
 def main():
-    connection = get_connection("database.db")
+    connection = connect_db("database.db")
 
     try:
-        create_table(connection)
+        
 
-        start = input("Enter Option (Add, Delete, Update, Search, Add Many):").lower()
+        userInput = input("Enter Option (Add, Delete, Update, Search, Add Many):").lower()
+
+        if userInput == "add":
+            username = input("Enter a Username: ")
+            password = input("Enter a Password: ")
+
+            try:
+                add_user(connection, username, password)
+            except Exception as e:
+                print(f"User NOT added!: {e}")
         
 
     finally:

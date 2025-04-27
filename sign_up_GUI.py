@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg
-import database
+from database import *
 
 class signUpGUI:
     def __init__(self):
@@ -65,6 +65,11 @@ class signUpGUI:
 
         if username.strip() != "" and password.strip() != "":
             print(F"Username: {username}, Password: {password}")
+            try:
+                connection = connect_db("database.db")
+                add_user(connection, username, password)
+            except Exception as e:
+                print(e)
         else:
             self.invalid_credentials()
 

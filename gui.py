@@ -16,7 +16,7 @@ class GUI:
         with dpg.font_registry():
             default_font = dpg.add_font("assets\Typographica-Blp5.ttf", 20)
 
-        with dpg.window(label="Chess Videos" , pos=(35, 50)):
+        with dpg.window(label="Chess Videos" , pos=(20, 50)):
 
             with dpg.group(horizontal=True):
                 startRecButton = dpg.add_button(label="Start Rec" , callback=self.start_recording, user_data="Fake user data")
@@ -89,7 +89,7 @@ class GUI:
 
     def run(self):
         
-        dpg.create_viewport(title='Content Buddy', width= 250, height = 200)
+        dpg.create_viewport(title='Content Buddy', width= 250, height = 200, x_pos= 1100, y_pos= 250)
         self.dpg.setup_dearpygui()
         self.dpg.show_viewport()
         self.dpg.start_dearpygui()

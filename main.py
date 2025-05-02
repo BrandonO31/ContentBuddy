@@ -1,9 +1,19 @@
 from obs import OBScontroller
 from gui import GUI
+from sign_up_GUI import signUpGUI
+from database import *
 import subprocess
 import os
 import time
 import psutil
+import threading
+import queue
+
+#What I want to use the Thread for is to allow the program to run the two events separately:
+# 1) Open the sign up GUI if necessary
+# 2) Once user successfully signs up, bring up the main GUI page
+# issue w ts workflow is DPG destroy_context() is used to shut down Sign Up window after sign up,
+# which causes the entire program to shut down, and due 2 nature of threading w DPG, the program 
 
 def is_obs_running():
     for proc in psutil.process_iter(['name']):
@@ -23,19 +33,31 @@ def launch_obs():
 
 
 if __name__ == "__main__":
-    launch_obs()
-    obs = OBScontroller()
 
-    #CHECK IF USER HAS ALREADY CREATED ACCOUNT: 
+    connection = connect_db("database.db")
 
-        #IF NOT: OPEN LOGIN GUI
+    create_user_table(connection)
+    
+    
+    if not user_exists(connection):
+        connection = connect_db("database.db")
+        print("No user found. Proceeding to sign-up...")
+        signUpPrompt = signUpGUI()
+        signUpPrompt.run()  
+        connection.close()  
 
-        #ELSE:
         
-    gui = GUI(obs)
-    gui.run()
+    connection = connect_db("database.db")
 
-    #tests
-  
+    print("Now Launching OBS and Main UI")
+    if user_exists(connection):
+        launch_obs()  # Launch OBS
+
+        
+        obs = OBScontroller()
+        gui = GUI(obs)
+        gui.run()
+
+    connection.close()  
 
 

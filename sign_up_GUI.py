@@ -6,6 +6,7 @@ class signUpGUI:
         self.dpg = dpg
         self.dpg.create_context()
         self.build_gui()
+        self.exit_flag = False
 
     def build_gui(self):
         with dpg.font_registry():
@@ -18,37 +19,6 @@ class signUpGUI:
 
             self.submit_button = dpg.add_button(label="Submit", callback=self.credentials_entered)
 
-            # with dpg.group(vertical=True):
-                
-            
-            
-            
-            
-            
-
-        
-        # STYLING
-
-        # with dpg.theme() as global_theme:
-
-        #     with dpg.theme_component(dpg.mvAll):
-                
-            
-        
-        # with dpg.theme() as start_button_theme:
-
-        #     with dpg.theme_component(dpg.mvButton):
-                
-        # with dpg.theme() as stop_button_theme:
-
-        #     with dpg.theme_component(dpg.mvButton):
-                
-
-        # dpg.bind_theme(global_theme)
-
-        # dpg.bind_item_theme(startRecButton , start_button_theme)
-        # dpg.bind_item_theme(stopRecButton , stop_button_theme)
-
         dpg.bind_font(default_font)
 
     
@@ -59,6 +29,10 @@ class signUpGUI:
     """
 
     def credentials_entered(self):
+        """
+        Called when submit button is pressed
+        Checks for Valid Username & Password
+        """
 
         username = dpg.get_value(self.username_input)
         password = dpg.get_value(self.password_input)
@@ -68,6 +42,11 @@ class signUpGUI:
             try:
                 connection = connect_db("database.db")
                 add_user(connection, username, password)
+
+                connection.close()
+                self.exit_flag = True
+                print(f"Exit Flag State: {self.exit_flag} ")
+
             except Exception as e:
                 print(e)
         else:
@@ -90,11 +69,15 @@ class signUpGUI:
 
         
     def run(self):
-        
-        dpg.create_viewport(title='Content Buddy Sign Up', width= 400, height = 200, x_pos= 1100, y_pos= 250,)
+        self.dpg.create_viewport(title='Content Buddy Sign Up', width= 400, height = 200, x_pos= 1100, y_pos= 250,)
         self.dpg.setup_dearpygui()
         self.dpg.show_viewport()
-        self.dpg.start_dearpygui()
+        print("RUN SIGN UP GUI STARTED")
+        
+        while self.dpg.is_dearpygui_running():
+            if self.exit_flag:
+                self.dpg.stop_dearpygui()
+            self.dpg.render_dearpygui_frame()
         self.dpg.destroy_context()
 
 

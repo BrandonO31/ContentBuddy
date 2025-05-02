@@ -35,6 +35,23 @@ def create_user_table(connection):
         print(f"User Table NOT created: {e}")
     pass
 
+def user_exists(connection):
+    """
+    Checks if a user exists in database.
+    Returns True is user exists, False o.w
+    """
+    query = "SELECT COUNT(*) FROM users"
+    
+    try:
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+            result = cursor.fetchone()
+            return result[0] > 0  # Returns True if count > 0, indicating users exist
+    except Exception as e:
+        print(f"Error checking user existence: {e}")
+        return False
+
 def create_video_series_table():
     pass
 

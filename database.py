@@ -52,8 +52,29 @@ def user_exists(connection):
         print(f"Error checking user existence: {e}")
         return False
 
-def create_video_series_table():
-    pass
+def create_video_series_table(connection):
+    """
+    Creates table for Video Series
+    """
+
+    query = """
+    CREATE TABLE IF NOT EXISTS series (
+        id INTEGER PRIMARY KEY,
+        user_id INTEGER,
+        seriesName TEXT NOT NULL,
+        episodeNumber INTEGER,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    )
+    """
+
+    try:
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+        print("User Table was created!")
+    except Exception as e:
+        print(f"User Table NOT created: {e}")
+    
 
 def initialize_db():
     """
@@ -82,8 +103,22 @@ def get_user_by_username(username):
 def verify_user_login(username, password):
     pass
 
-def add_video_series(user_id, series_name, episode_number):
-    pass
+
+# Start of Video Series functions -------------------------------------------------------------------------------------
+
+
+def add_video_series(connection, user_id:int, seriesName:str, episodeNum:str):
+    query = "INSERT INTO series (user_id, seriesName, episodeNumber) VALUES (?, ?, ?)"
+
+    #LOGIC FOR VALID USERNAME & PASSWORD ...
+
+    try:
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query, (user_id, seriesName, episodeNum))
+        print(f"Series: {seriesName} has been added to the database!")
+    except Exception as e:
+        print(e)
 
 def get_series_by_user(user_id):
     pass

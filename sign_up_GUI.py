@@ -13,9 +13,13 @@ class signUpGUI:
             default_font = dpg.add_font(r"assets\Typographica-Blp5.ttf", 20)
 
         with dpg.window(label="SIGN UP" , pos=(20, 50), width = 350) as self.window:
-            self.username_input = dpg.add_input_text(label="Enter Username")
+            self.username_input = dpg.add_input_text(label="Enter  Username")
             
-            self.password_input = dpg.add_input_text(label="Enter Password", password= True)
+            self.password_input = dpg.add_input_text(label="Enter  Password", password= True)
+
+            self.series_name_input = dpg.add_input_text(label="Name of Series")
+
+            self.episode_input = dpg.add_input_int(label="Current Episode Number", min_value=0)
 
             self.submit_button = dpg.add_button(label="Submit", callback=self.credentials_entered)
 
@@ -36,6 +40,8 @@ class signUpGUI:
 
         username = dpg.get_value(self.username_input)
         password = dpg.get_value(self.password_input)
+        seriesName = dpg.get_value(self.series_name_input)
+        episodeNumber = dpg.get_value(self.episode_input)
 
         if username.strip() != "" and password.strip() != "":
             print(F"Username: {username}, Password: {password}")
@@ -43,6 +49,18 @@ class signUpGUI:
                 connection = connect_db("database.db")
                 add_user(connection, username, password)
 
+                
+                cursor = connection.cursor()
+                cursor.execute(
+                    "SELECT id FROM users WHERE username = ? AND password = ?", 
+                    (username, password)
+                )
+                user_id = cursor.fetchone()[0]
+
+                create_video_series_table(connection)
+
+                add_video_series(connection, user_id, seriesName, episodeNumber)
+                
                 connection.close()
                 self.exit_flag = True
                 print(f"Exit Flag State: {self.exit_flag} ")
@@ -69,7 +87,7 @@ class signUpGUI:
 
         
     def run(self):
-        self.dpg.create_viewport(title='Content Buddy Sign Up', width= 400, height = 200, x_pos= 1100, y_pos= 250,)
+        self.dpg.create_viewport(title='Content Buddy Sign Up', width= 425, height = 300, x_pos= 1100, y_pos= 250,)
         self.dpg.setup_dearpygui()
         self.dpg.show_viewport()
         print("RUN SIGN UP GUI STARTED")

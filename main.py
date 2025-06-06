@@ -2,6 +2,7 @@ from obs import OBScontroller
 from gui import GUI
 from sign_up_GUI import signUpGUI
 from database import *
+from AppState import *
 import subprocess
 import os
 import time
@@ -49,12 +50,12 @@ if __name__ == "__main__":
         
     with connect_db(DB_PATH) as connection:
         print("Now Launching OBS and Main UI")
+        
         if user_exists(connection):
-            launch_obs()  # Launch OBS
-
-            
-            obs = OBScontroller()
-            gui = GUI(obs)
+            launch_obs()  
+            app_state = AppState(db_path=DB_PATH)
+            obs = OBScontroller(app_state)
+            gui = GUI(obs, app_state)
             gui.run()
 
 

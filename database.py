@@ -120,11 +120,56 @@ def add_video_series(connection, user_id:int, seriesName:str, episodeNum:str):
     except Exception as e:
         print(e)
 
-def get_series_by_user(user_id):
-    pass
+def get_series_names_by_user(connection, user_id):
+    """
+    Returns a list of series names for the given user ID.
+    """
+    query = "SELECT seriesName FROM series WHERE user_id = ?"
+    
+    try:
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query, (user_id,))
+            results = cursor.fetchall()
+            return [row[0] for row in results]  # Extract just the names
+    except Exception as e:
+        print(f"Error fetching series names: {e}")
+        return []
 
-def update_episode_number(series_id, new_episode_number):
-    pass
+def get_latest_episode_by_user(connection, user_id):
+    """
+    Gets the latest episode number for the given user.
+    Assumes only one series per user.
+    """
+    query = "SELECT episodeNumber FROM series WHERE user_id = ? LIMIT 1"
+
+    try:
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query, (user_id,))
+            result = cursor.fetchone()
+            return result[0] if result else 0
+    except Exception as e:
+        print(f"Error fetching episode number: {e}")
+        return 0
+
+
+def increment_episode_number_for_user(connection, user_id):
+    """
+    Increments the episode number by 1 for the user's video series.
+    Assumes each user has only one video series.
+    """
+    query = "UPDATE series SET episodeNumber = episodeNumber + 1 WHERE user_id = ?"
+
+    try:
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query, (user_id,))
+            
+            print(f"Episode number incremented for user_id: {user_id}")
+    except Exception as e:
+        print(f"Failed to increment episode number: {e}")
+
 
             
 def main():

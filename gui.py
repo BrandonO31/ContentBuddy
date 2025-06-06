@@ -3,10 +3,14 @@ import obs as obs
 import threading
 import time
 from automation import open_chess_website
+from database import *
+from AppState import AppState
+
 
 class GUI:
-    def __init__(self, obs_controller):
+    def __init__(self, obs_controller, app_state):
         self.obs = obs_controller
+        self.state = app_state
         self.dpg = dpg
         self.dpg.create_context()
         self.build_gui()
@@ -24,7 +28,10 @@ class GUI:
             
             dpg.add_button(label="Open Chess.com", callback = open_chess_website)
             
-            dpg.add_text(f"Chess Video Ep#:", tag="episode_counter")
+            ep_num = self.state.get_episode()
+            dpg.add_text(f"Current Episode #: {ep_num}", tag="episode_counter")
+
+
             dpg.add_text(tag="countdown_text")
 
         
@@ -68,13 +75,17 @@ class GUI:
         # self.obs.start_recording()
 
     def stop_recording(self): 
-        self.obs.stop_recording()
         self.update_episode_number()
+        ep_num = self.state.get_episode()
+        print(f"Stop Recording Button clicked. Current Episode number is: {ep_num}")
+        self.obs.stop_recording()
+        
 
     def update_episode_number(self): 
-        
-        episode_num = self.obs.get_episode_number()
-        dpg.set_value("episode_counter" , f"Chess Video Ep#: {episode_num}")
+        ep_num = self.state.get_episode()
+        dpg.set_value("episode_counter", f"Current Episode #: {ep_num}")
+
+
 
     
     def countdown_and_start(self, count: int):

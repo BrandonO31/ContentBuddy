@@ -2,21 +2,21 @@ from obsws_python import ReqClient
 from obsws_python import EventClient
 from pathlib import Path
 import time
+from database import *
+from AppState import AppState
 
 
 
 class OBScontroller:
-    def __init__(self):
+    def __init__(self, app_state):
         """Initializes instance of OBS controller
         ReqClient auto detects config.toml in same dir as main.py o.w. creates file & user must manually add password
         EventClient also
         """
 
         #Global Variables
-
-        self.ep_num = 22
-
-
+        self.state = app_state
+        
         project_root = Path().resolve()
         config_path = project_root / "config.toml"
 
@@ -94,34 +94,38 @@ class OBScontroller:
 
         """
 
-        
-        old = Path(self.last_recording_path)
-        new = old.with_name(f"RoadTo2000Eloep{self.ep_num}.mkv")
-
         retries = 10
-        delay = 0.1
+        delay = 0.5
 
-        for _ in range(retries):
+        # give the program a chance to get the recording path
+        while not self.last_recording_path and retries > 0:
+            time.sleep(delay)
+            retries -= 1
+
+        if not self.last_recording_path:
+            print("Recording path not set — cannot rename file.")
+            return
+
+        old = Path(self.last_recording_path)
+        new = old.with_name(self.state.get_next_episode_filename())
+
+        for _ in range(5):
             try:
                 old.rename(new)
-                self.increment_episode_number()
-
+                print(f"Renamed to {new}")
+                self.state.increment_episode()
+                break
             except Exception as e:
-                print(e)
-                time.sleep(delay)
-        
+                print(f"Rename failed: {e}")
+                time.sleep(0.5)
+            
 
         print("File Renaming Method Called")
+        print(f"Episode Number from DATABASE: {self.state.get_episode()}")
 
-        
-    def get_episode_number(self):
 
-        return self.ep_num
+
     
-    def increment_episode_number(self):
-
-        self.ep_num += 1
-
         
 
 

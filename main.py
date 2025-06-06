@@ -34,30 +34,27 @@ def launch_obs():
 
 if __name__ == "__main__":
 
-    connection = connect_db("database.db")
+    DB_PATH = "database.db"
 
-    create_user_table(connection)
+    with connect_db(DB_PATH) as connection:
+        create_user_table(connection)
     
     
-    if not user_exists(connection):
-        connection = connect_db("database.db")
-        print("No user found. Proceeding to sign-up...")
-        signUpPrompt = signUpGUI()
-        signUpPrompt.run()  
-        connection.close()  
+        if not user_exists(connection):
+            print("No user found. Proceeding to sign-up...")
+            signUpPrompt = signUpGUI()
+            signUpPrompt.run()  
+            connection.close()  
 
         
-    connection = connect_db("database.db")
+    with connect_db(DB_PATH) as connection:
+        print("Now Launching OBS and Main UI")
+        if user_exists(connection):
+            launch_obs()  # Launch OBS
 
-    print("Now Launching OBS and Main UI")
-    if user_exists(connection):
-        launch_obs()  # Launch OBS
-
-        
-        obs = OBScontroller()
-        gui = GUI(obs)
-        gui.run()
-
-    connection.close()  
+            
+            obs = OBScontroller()
+            gui = GUI(obs)
+            gui.run()
 
 

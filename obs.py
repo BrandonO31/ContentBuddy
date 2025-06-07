@@ -1,3 +1,5 @@
+import cv2  # Add this to top
+import numpy as np
 from obsws_python import ReqClient
 from obsws_python import EventClient
 from pathlib import Path
@@ -121,8 +123,71 @@ class OBScontroller:
             
 
         print("File Renaming Method Called")
-        print(f"Episode Number from DATABASE: {self.state.get_episode()}")
 
+        self.thumbnail_creation_process()
+
+
+    
+    def thumbnail_creation_process(self):
+        """
+        Starts 10s thumbnail face recording, gets best frame, and saves 
+        """
+
+        print("Starting thumbnail face capture!")
+        self.client.start_record()
+        time.sleep(10)
+        self.client.stop_record()
+
+        time.sleep(2)
+
+        face_vid_path = Path(self.last_recording_path).with_name(
+            f"ep{self.state.get_episode()}_face.mkv"
+        )
+        
+        for _ in range(5):
+            try:
+                Path(self.last_recording_path).rename(face_vid_path)
+                print(f"Thumbnail faec video saved as {face_vid_path}")
+                break
+            except Exception as e:
+                print(f"Rename failed: {e}")
+                time.sleep(0.5)
+        self.extract_best_frame(face_vid_path)
+    
+    def extract_best_frame(self, video_path):
+        """
+        Extract sharpest frame using Laplacian variance
+        """
+
+        cap = cv2.VideoCapture(str(video_path))
+        best_frame = None
+        best_focus = 0
+        frame_count = 0
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            focus = cv2.Laplacian(gray, cv2.CV_64F).var()
+
+            if focus > best_focus:
+                best_focus = focus
+                best_frame = frame
+
+            frame_count += 1
+        
+        cap.release()
+
+        if best_frame is not None:
+            output_path = Path("Screenshots") / f"ep{self.state.get_episode()}_face_frame.png"
+            output_path.parent.mkdir(exist_ok=True)
+            cv2.imwrite(str(output_path), best_frame)
+            print(f"Best thumbnail frame saved to {output_path}")
+        
+        else:
+            print("No frame extracted")
 
 
     

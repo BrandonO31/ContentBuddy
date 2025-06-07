@@ -7,6 +7,7 @@ import subprocess
 import os
 import time
 import psutil
+import socket
 import threading
 import queue
 
@@ -31,6 +32,14 @@ def launch_obs():
         time.sleep(0.5)
         print("OBS is opening...")
 
+def is_obs_websocket_ready(host="localhost", port=4455):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        try:
+            s.settimeout(1)
+            s.connect((host, port))
+            return True
+        except (ConnectionRefusedError, socket.timeout):
+            return False
 
 
 if __name__ == "__main__":
@@ -52,8 +61,14 @@ if __name__ == "__main__":
         print("Now Launching OBS and Main UI")
         
         if user_exists(connection):
+
+            
             launch_obs()  
             app_state = AppState(db_path=DB_PATH)
+            
+            while not is_obs_websocket_ready():
+                print("Waiting for OBS WebSocket to be ready...")
+                time.sleep(1)
             obs = OBScontroller(app_state)
             gui = GUI(obs, app_state)
             gui.run()

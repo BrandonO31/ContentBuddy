@@ -134,8 +134,9 @@ class OBScontroller:
         """
 
         print("Starting thumbnail face capture!")
+        time.sleep(2)
         self.client.start_record()
-        time.sleep(10)
+        time.sleep(6)
         self.client.stop_record()
 
         time.sleep(2)
@@ -147,7 +148,7 @@ class OBScontroller:
         for _ in range(5):
             try:
                 Path(self.last_recording_path).rename(face_vid_path)
-                print(f"Thumbnail faec video saved as {face_vid_path}")
+                print(f"Thumbnail face video saved as {face_vid_path}")
                 break
             except Exception as e:
                 print(f"Rename failed: {e}")

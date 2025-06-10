@@ -18,9 +18,9 @@ class GUI:
     def build_gui(self):
         
         with dpg.font_registry():
-            default_font = dpg.add_font("assets\Typographica-Blp5.ttf", 20)
+            default_font = dpg.add_font("assets\Typographica-Blp5.ttf", 30)
 
-        with dpg.window(label="Chess Videos" , pos=(20, 50)):
+        with dpg.window(label="Chess Videos", pos=(0, 0), height=300,  width=250):
 
             with dpg.group(horizontal=True):
                 startRecButton = dpg.add_button(label="Start Rec" , callback=self.start_recording, user_data="Fake user data")
@@ -33,6 +33,24 @@ class GUI:
 
 
             dpg.add_text(tag="countdown_text")
+
+                    # Toggle button to show/hide settings
+            dpg.add_spacer(height=10)
+
+            with dpg.collapsing_header(label="⚙️ Settings", default_open=False):
+
+                # Dummy Field 1
+                dpg.add_input_text(label="Main Recording Scene", tag="main_rec_scene")
+                dpg.add_button(label="Submit", callback=lambda: print("Setting 1:", dpg.get_value("Recording Sce")))
+
+                # Dummy Field 2
+                dpg.add_input_text(label="Thumbnail Scene", tag="thumbnail_scene")
+                dpg.add_button(label="Submit", callback=lambda: print("Setting 2:", dpg.get_value("setting_2_input")))
+
+                # Dummy Field 3
+                dpg.add_input_text(label="Setting 3", tag="setting_3_input")
+                dpg.add_button(label="Submit Setting 3", callback=lambda: print("Setting 3:", dpg.get_value("setting_3_input")))
+
 
         
         # STYLING
@@ -100,7 +118,7 @@ class GUI:
 
     def run(self):
         
-        dpg.create_viewport(title='Content Buddy', width= 250, height = 200, x_pos= 1100, y_pos= 250)
+        dpg.create_viewport(title='Content Buddy', width= 275, height = 400, x_pos= 1100, y_pos= 250)
         self.dpg.setup_dearpygui()
         self.dpg.show_viewport()
         self.dpg.start_dearpygui()

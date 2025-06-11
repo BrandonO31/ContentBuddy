@@ -59,7 +59,16 @@ class signUpGUI:
 
                 create_video_series_table(connection)
 
-                add_video_series(connection, user_id, seriesName, episodeNumber)
+                series_id = add_video_series(connection, user_id, seriesName, episodeNumber)
+
+                print(f"Inserting into settings with series_id: {series_id} (type: {type(series_id)})")
+
+
+                #creating corresponding series settings table
+
+                create_series_settings_table(connection)
+
+                add_series_setting(connection, series_id)
                 
                 connection.close()
                 self.exit_flag = True

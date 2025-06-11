@@ -54,8 +54,8 @@ if __name__ == "__main__":
             print("No user found. Proceeding to sign-up...")
             signUpPrompt = signUpGUI()
             signUpPrompt.run()  
-            connection.close()  
-
+            
+    connection.close()  
         
     with connect_db(DB_PATH) as connection:
         print("Now Launching OBS and Main UI")

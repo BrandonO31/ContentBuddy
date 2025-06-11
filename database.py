@@ -11,7 +11,7 @@ def connect_db(db_name):
         raise
 
     
-
+# User Functions
 def create_user_table(connection):
     
     """
@@ -21,8 +21,8 @@ def create_user_table(connection):
     query = """
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,
-        username TEXT NOT NULL,
-        password TEXT NOT NULL UNIQUE
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
     )
     """
 
@@ -52,6 +52,22 @@ def user_exists(connection):
         print(f"Error checking user existence: {e}")
         return False
 
+def add_user(connection, username:str, password:str):
+    query = "INSERT INTO users (username, password) VALUES (?, ?)"
+
+    #LOGIC FOR VALID USERNAME & PASSWORD ...
+
+    try:
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query, (username, password))
+        print(f"User: {username} has been added to the database!")
+    except Exception as e:
+        print(e)
+
+
+# Video Series functions -------------------------------------------------------------------------------------
+
 def create_video_series_table(connection):
     """
     Creates table for Video Series
@@ -74,37 +90,7 @@ def create_video_series_table(connection):
         print("User Table was created!")
     except Exception as e:
         print(f"User Table NOT created: {e}")
-    
 
-def initialize_db():
-    """
-    Function to be used elsewhere in program to initialize a connection with the DB & do whatever
-    """
-    pass
-
-def add_user(connection, username:str, password:str):
-    query = "INSERT INTO users (username, password) VALUES (?, ?)"
-
-    #LOGIC FOR VALID USERNAME & PASSWORD ...
-
-    try:
-        with connection:
-            cursor = connection.cursor()
-            cursor.execute(query, (username, password))
-        print(f"User: {username} has been added to the database!")
-    except Exception as e:
-        print(e)
-
-    
-
-def get_user_by_username(username):
-    pass
-
-def verify_user_login(username, password):
-    pass
-
-
-# Start of Video Series functions -------------------------------------------------------------------------------------
 
 
 def add_video_series(connection, user_id:int, seriesName:str, episodeNum:str):
@@ -116,6 +102,7 @@ def add_video_series(connection, user_id:int, seriesName:str, episodeNum:str):
         with connection:
             cursor = connection.cursor()
             cursor.execute(query, (user_id, seriesName, episodeNum))
+            return cursor.lastrowid
         print(f"Series: {seriesName} has been added to the database!")
     except Exception as e:
         print(e)
@@ -171,7 +158,46 @@ def increment_episode_number_for_user(connection, user_id):
         print(f"Failed to increment episode number: {e}")
 
 
-            
+
+# User Settings Functions --------------------------------------------------------------------------------------------------------------------------------
+
+def create_series_settings_table(connection):
+    """
+    Creates table for User Settings
+    """
+
+    query = """
+    CREATE TABLE IF NOT EXISTS series_settings (
+        id INTEGER PRIMARY KEY,
+        series_id INTEGER,
+        main_scene TEXT,
+        thumbnail_scene TEXT,
+        file_name TEXT,
+        FOREIGN KEY(series_id) REFERENCES series(id) ON DELETE CASCADE
+    )
+    """
+    try:
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+        print("Series Settings Table was created!")
+    except Exception as e:
+        print(f"User Table NOT created: {e}")
+
+
+
+def add_series_setting(connection, series_id:int,):
+    query = "INSERT INTO series_settings (series_id) VALUES (?)"
+
+    try:
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query, (series_id,))
+        print(f"Series Setting Table has been added for the following series: {series_id}")
+    except Exception as e:
+        print(f"Error in add_series_setting: {e}")
+
+
 def main():
     connection = connect_db("database.db")
 

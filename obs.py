@@ -55,6 +55,10 @@ class OBScontroller:
         """
 
         try:
+            response = self.state.get_scene_by_scenario("main_scene")
+            print(f"The scene obtained for recording is: {response}", type(response))
+            self.set_scene(response)
+
             self.client.start_record()
 
         except Exception as e:
@@ -134,6 +138,9 @@ class OBScontroller:
         """
 
         print("Starting thumbnail face capture!")
+        response = self.state.get_scene_by_scenario("thumbnail_scene")
+        print(f"The scene obtained for recording is: {response}", type(response))
+        self.set_scene(response)
         time.sleep(2)
         self.client.start_record()
         time.sleep(6)
@@ -192,7 +199,13 @@ class OBScontroller:
 
     def get_all_scenes(self):
         scenes = self.client.get_scene_list()
-        print(scenes.scenes)
+        scene_names = [scenes['sceneName'] for scenes in scenes.scenes]
+
+        return scene_names
+    
+    def set_scene(self, scene_name):
+
+        self.client.set_current_program_scene(scene_name)
 
 
     

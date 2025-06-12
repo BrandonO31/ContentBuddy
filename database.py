@@ -220,17 +220,21 @@ def update_series_setting(connection, series_id, key, value):
 def get_series_setting(connection, series_id, key):
 
     query = f"""
-        SELECT {key} FROM SeriesSettings WHERE series_id = ?
+        SELECT {key} FROM series_settings WHERE series_id = ?
         """
 
     try:
         with connection:
 
             cursor = connection.cursor()
-            cursor.execute
+            cursor.execute(query, (series_id,))
+
+            result = cursor.fetchone()
+            return result[0] if result else None
 
     except Exception as e:
         print(f"Error getting series setting: {e}")
+        return None
 
 def main():
     connection = connect_db("database.db")

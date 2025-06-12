@@ -20,7 +20,7 @@ class GUI:
         with dpg.font_registry():
             default_font = dpg.add_font("assets\Typographica-Blp5.ttf", 30)
 
-        with dpg.window(label="Chess Videos", pos=(0, 0), height=300,  width=250):
+        with dpg.window(label="Chess Videos", pos=(0, 0), height=350,  width=400):
 
             with dpg.group(horizontal=True):
                 startRecButton = dpg.add_button(label="Start Rec" , callback=self.start_recording, user_data="Fake user data")
@@ -39,15 +39,16 @@ class GUI:
 
             with dpg.collapsing_header(label="⚙️ Settings", default_open=False):
 
-                # Dummy Field 1
-                dpg.add_input_text(label="Main Recording Scene", tag="main_rec_scene")
-                dpg.add_button(label="Submit", callback=lambda: print("Setting 1:", dpg.get_value("Recording Sce")))
 
-                # Dummy Field 2
-                dpg.add_input_text(label="Thumbnail Scene", tag="thumbnail_scene")
-                dpg.add_button(label="Submit", callback=lambda: print("Setting 2:", dpg.get_value("setting_2_input")))
+                scene_names = self.obs.get_all_scenes()
+                dpg.add_text("Select Main Recording Scene")
+                dpg.add_combo(items=scene_names, tag="main_scene_dropdown")
+                dpg.add_button(label="Set Main Scene", callback=self.set_main_scene)
 
-                # Dummy Field 3
+                dpg.add_text("Select Thumbnail Recording Scene")
+                dpg.add_combo(items=scene_names, tag="thumbnail_scene_dropdown")
+                dpg.add_button(label="Set Thumbnail Scene", callback=self.set_thumbnail_scene)
+
                 dpg.add_input_text(label="Setting 3", tag="setting_3_input")
                 dpg.add_button(label="Submit Setting 3", callback=lambda: print("Setting 3:", dpg.get_value("setting_3_input")))
 
@@ -58,7 +59,7 @@ class GUI:
         with dpg.theme() as global_theme:
 
             with dpg.theme_component(dpg.mvAll):
-                dpg.add_theme_color(dpg.mvThemeCol_FrameBg, (255, 0, 0), category=dpg.mvThemeCat_Core)
+                dpg.add_theme_color(dpg.mvThemeCol_FrameBg, (0, 0, 0), category=dpg.mvThemeCat_Core)
                 dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 1, category=dpg.mvThemeCat_Core)
             
         
@@ -103,9 +104,6 @@ class GUI:
         ep_num = self.state.get_episode()
         dpg.set_value("episode_counter", f"Current Episode #: {ep_num}")
 
-
-
-    
     def countdown_and_start(self, count: int):
         while count > 0:
             dpg.set_value("countdown_text", f"Starting in {count}")
@@ -116,9 +114,50 @@ class GUI:
         self.obs.start_recording()
         
 
+    def set_main_scene(self):
+        selected = dpg.get_value("main_scene_dropdown")
+        series_id = self.state.series_id
+        key = "main_scene"
+        value = selected
+
+        print(f"Updating {key} to '{value}' for series_id {series_id}")
+
+        try:
+                connection = connect_db("database.db")
+                update_series_setting(connection, series_id, key, value)
+
+                print(f"Main recording scene set to: {value}")
+                
+                connection.close()
+
+        except Exception as e:
+                print(f"Error setting main recording scene: {e}")
+        
+
+    def set_thumbnail_scene(self):
+        selected = dpg.get_value("thumbnail_scene_dropdown")
+        series_id = self.state.series_id
+        key = "thumbnail_scene"
+        value = selected
+
+        print(f"Updating {key} to '{value}' for series_id {series_id}")
+
+        try:
+                connection = connect_db("database.db")
+                update_series_setting(connection, series_id, key, value)
+
+                print(f"Thumbnail recording scene set to: {value}")
+                
+                connection.close()
+
+        except Exception as e:
+                print(f"Error setting thumbnail recording scene: {e}")
+       
+
+
     def run(self):
     
-        dpg.create_viewport(title='Content Buddy', width= 275, height = 400, x_pos= 1100, y_pos= 250)
+        dpg.create_viewport(title='Content Buddy', width= 425, height = 400, x_pos= 1100, y_pos= 250)
         self.dpg.setup_dearpygui()
         self.dpg.show_viewport()
         self.dpg.start_dearpygui()

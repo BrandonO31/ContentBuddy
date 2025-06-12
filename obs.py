@@ -190,6 +190,10 @@ class OBScontroller:
         else:
             print("No frame extracted")
 
+    def get_all_scenes(self):
+        scenes = self.client.get_scene_list()
+        print(scenes.scenes)
+
 
     
         

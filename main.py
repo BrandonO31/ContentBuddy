@@ -11,11 +11,6 @@ import socket
 import threading
 import queue
 
-#What I want to use the Thread for is to allow the program to run the two events separately:
-# 1) Open the sign up GUI if necessary
-# 2) Once user successfully signs up, bring up the main GUI page
-# issue w ts workflow is DPG destroy_context() is used to shut down Sign Up window after sign up,
-# which causes the entire program to shut down, and due 2 nature of threading w DPG, the program 
 
 def is_obs_running():
     for proc in psutil.process_iter(['name']):
@@ -31,6 +26,8 @@ def launch_obs():
     while not is_obs_running():
         time.sleep(0.5)
         print("OBS is opening...")
+    
+
 
 def is_obs_websocket_ready(host="localhost", port=4455):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -41,10 +38,21 @@ def is_obs_websocket_ready(host="localhost", port=4455):
         except (ConnectionRefusedError, socket.timeout):
             return False
 
+def await_obs_initialization():
+    max_retries = 10
+    for _ in range(max_retries):
+        try:
+            scenes = obs.get_all_scenes()
+            print(scenes)
+            break
+        except Exception as e:
+            print(f"OBS not ready yet, standby")
+            time.sleep(1)
 
 if __name__ == "__main__":
 
     DB_PATH = "database.db"
+    app_state = AppState(db_path=DB_PATH)
 
     with connect_db(DB_PATH) as connection:
         create_user_table(connection)
@@ -52,7 +60,7 @@ if __name__ == "__main__":
     
         if not user_exists(connection):
             print("No user found. Proceeding to sign-up...")
-            signUpPrompt = signUpGUI()
+            signUpPrompt = signUpGUI(app_state)
             signUpPrompt.run()  
             
     connection.close()  
@@ -64,13 +72,14 @@ if __name__ == "__main__":
 
             
             launch_obs()  
-            app_state = AppState(db_path=DB_PATH)
             
             while not is_obs_websocket_ready():
                 print("Waiting for OBS WebSocket to be ready...")
                 time.sleep(1)
             obs = OBScontroller(app_state)
+            await_obs_initialization() 
             gui = GUI(obs, app_state)
+            
             gui.run()
 
 

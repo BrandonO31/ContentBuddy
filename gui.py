@@ -117,7 +117,7 @@ class GUI:
         
 
     def run(self):
-        
+    
         dpg.create_viewport(title='Content Buddy', width= 275, height = 400, x_pos= 1100, y_pos= 250)
         self.dpg.setup_dearpygui()
         self.dpg.show_viewport()

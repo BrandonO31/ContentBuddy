@@ -102,8 +102,10 @@ def add_video_series(connection, user_id:int, seriesName:str, episodeNum:str):
         with connection:
             cursor = connection.cursor()
             cursor.execute(query, (user_id, seriesName, episodeNum))
-            return cursor.lastrowid
-        print(f"Series: {seriesName} has been added to the database!")
+            print(f"Series: {seriesName} has been added to the database!")
+
+            return cursor.lastrowid    
+        
     except Exception as e:
         print(e)
 
@@ -197,6 +199,38 @@ def add_series_setting(connection, series_id:int,):
     except Exception as e:
         print(f"Error in add_series_setting: {e}")
 
+
+def update_series_setting(connection, series_id, key, value):
+
+    query = f"""
+        UPDATE series_settings
+        SET {key} = ?
+        WHERE series_id = ?
+        """
+    
+    try:
+        with connection:
+
+            cursor = connection.cursor()
+            cursor.execute(query, (value, series_id))
+    
+    except Exception as e:
+        print(f"Error in updating series setting: {e}")
+
+def get_series_setting(connection, series_id, key):
+
+    query = f"""
+        SELECT {key} FROM SeriesSettings WHERE series_id = ?
+        """
+
+    try:
+        with connection:
+
+            cursor = connection.cursor()
+            cursor.execute
+
+    except Exception as e:
+        print(f"Error getting series setting: {e}")
 
 def main():
     connection = connect_db("database.db")

@@ -1,9 +1,11 @@
 import dearpygui.dearpygui as dpg
 from database import *
+import AppState as AppState
 
 class signUpGUI:
-    def __init__(self):
+    def __init__(self, state):
         self.dpg = dpg
+        self.state = state
         self.dpg.create_context()
         self.build_gui()
         self.exit_flag = False
@@ -60,7 +62,7 @@ class signUpGUI:
                 create_video_series_table(connection)
 
                 series_id = add_video_series(connection, user_id, seriesName, episodeNumber)
-
+                self.state.series_id = series_id
                 print(f"Inserting into settings with series_id: {series_id} (type: {type(series_id)})")
 
 

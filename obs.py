@@ -4,6 +4,7 @@ from obsws_python import ReqClient
 from obsws_python import EventClient
 from pathlib import Path
 import time
+from automation import *
 from database import *
 from AppState import AppState
 
@@ -160,7 +161,8 @@ class OBScontroller:
             except Exception as e:
                 print(f"Rename failed: {e}")
                 time.sleep(0.5)
-        self.extract_best_frame(face_vid_path)
+        
+            
     
     def extract_best_frame(self, video_path):
         """
@@ -193,9 +195,14 @@ class OBScontroller:
             output_path.parent.mkdir(exist_ok=True)
             cv2.imwrite(str(output_path), best_frame)
             print(f"Best thumbnail frame saved to {output_path}")
+            upload_image_to_imgur(output_path)
+            time.sleep(1)
+            automate_thumbnail_with_photopea(output_path, self.state.episode_num)
+            
         
         else:
             print("No frame extracted")
+            
 
     def get_all_scenes(self):
         scenes = self.client.get_scene_list()

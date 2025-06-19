@@ -6,6 +6,9 @@ import requests
 
 IMGUR_CLIENT_ID = "145f8718a15deca"
 
+def open_chess_website():
+    webbrowser.open("https://www.chess.com" , new=2)
+    
 def automate_thumbnail_with_photopea(screenshot_path: str, episode_num: int):
     imgur_url = upload_image_to_imgur(screenshot_path)
 

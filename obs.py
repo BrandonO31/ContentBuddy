@@ -1,4 +1,4 @@
-import cv2  # Add this to top
+import cv2  
 import numpy as np
 from obsws_python import ReqClient
 from obsws_python import EventClient

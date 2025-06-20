@@ -3,8 +3,13 @@ import json
 import urllib.parse
 from pathlib import Path
 import requests
+from dotenv import load_dotenv
+import os
 
-IMGUR_CLIENT_ID = "145f8718a15deca"
+load_dotenv()
+
+IMGUR_CLIENT_ID = os.getenv("IMGUR_CLIENT_ID")
+
 
 def open_chess_website():
     webbrowser.open("https://www.chess.com" , new=2)
@@ -142,11 +147,16 @@ def upload_image_to_imgur(image_path: str) -> str:
     with open(image_path, 'rb') as f:
         files = {'image': (Path(image_path).name, f, 'image/png')}
         response = requests.post("https://api.imgur.com/3/image", headers=headers, files=files)
-    
+
     if response.status_code == 200:
-        return response.json()['data']['link']
+        data = response.json()['data']
+        print(f"[Imgur Upload] Image URL: {data['link']}")
+        print(f"[Imgur Upload] Delete Hash: {data['deletehash']}")  # <- Print delete hash
+        return data['link']
     else:
         raise Exception(f"Imgur upload failed: {response.json()}")
+
+
     
 def main():
     screenshot_path = "Screenshots/ep51_face_frame.png"

@@ -2,8 +2,10 @@ import dearpygui.dearpygui as dpg
 import obs as obs
 import threading
 import time
+from pathlib import Path
 from automation import open_chess_website
 from database import *
+from transcription import transcribe_full_pipeline
 from AppState import AppState
 
 
@@ -34,6 +36,9 @@ class GUI:
 
             dpg.add_text(tag="countdown_text")
 
+            dpg.add_button(label="Generate Transcript", callback=self.generate_transcript)
+
+
                     # Toggle button to show/hide settings
             dpg.add_spacer(height=10)
 
@@ -50,7 +55,8 @@ class GUI:
                 dpg.add_button(label="Set Thumbnail Scene", callback=self.set_thumbnail_scene)
 
                 dpg.add_input_text(label="Setting 3", tag="setting_3_input")
-                dpg.add_button(label="Submit Setting 3", callback=lambda: print("Setting 3:", dpg.get_value("setting_3_input")))
+                dpg.add_button(label="Set Episode Number", callback=self.set_episode_number_manual)
+
 
 
         
@@ -104,6 +110,23 @@ class GUI:
         ep_num = self.state.get_episode()
         dpg.set_value("episode_counter", f"Current Episode #: {ep_num}")
 
+    def set_episode_number_manual(self):
+        try:
+            new_ep = int(dpg.get_value("setting_3_input"))
+            connection = connect_db("database.db")
+            set_episode_number_for_user(connection, self.state.user_id, new_ep)
+            connection.close()
+
+            self.state.episode_num = new_ep  # update local AppState
+            self.update_episode_number()
+            print(f"Episode number manually set to {new_ep}")
+
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
+        except Exception as e:
+            print(f"Failed to set episode number manually: {e}")
+
+
     def countdown_and_start(self, count: int):
         while count > 0:
             dpg.set_value("countdown_text", f"Starting in {count}")
@@ -153,7 +176,14 @@ class GUI:
         except Exception as e:
                 print(f"Error setting thumbnail recording scene: {e}")
        
+    def generate_transcript(self):
+    
+        ep_num_temp = self.state.get_episode()
+        ep_num_temp -= 1
+        print(f"Generating transcript for episode {ep_num_temp}")
 
+        video_path = Path(f"C:/Users/brand/Videos/RoadTo2000Eloep{ep_num_temp}.mkv")
+        threading.Thread(target=transcribe_full_pipeline, args=(video_path,), daemon=True).start()
 
     def run(self):
     

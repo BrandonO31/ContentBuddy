@@ -55,7 +55,7 @@ def user_exists(connection):
 def add_user(connection, username:str, password:str):
     query = "INSERT INTO users (username, password) VALUES (?, ?)"
 
-    #LOGIC FOR VALID USERNAME & PASSWORD ...
+    
 
     try:
         with connection:
@@ -96,7 +96,7 @@ def create_video_series_table(connection):
 def add_video_series(connection, user_id:int, seriesName:str, episodeNum:str):
     query = "INSERT INTO series (user_id, seriesName, episodeNumber) VALUES (?, ?, ?)"
 
-    #LOGIC FOR VALID USERNAME & PASSWORD ...
+    
 
     try:
         with connection:
@@ -120,7 +120,7 @@ def get_series_names_by_user(connection, user_id):
             cursor = connection.cursor()
             cursor.execute(query, (user_id,))
             results = cursor.fetchall()
-            return [row[0] for row in results]  # Extract just the names
+            return [row[0] for row in results]  
     except Exception as e:
         print(f"Error fetching series names: {e}")
         return []
@@ -159,6 +159,15 @@ def increment_episode_number_for_user(connection, user_id):
     except Exception as e:
         print(f"Failed to increment episode number: {e}")
 
+def set_episode_number_for_user(connection, user_id, new_episode_number):
+    query = "UPDATE series SET episodeNumber = ? WHERE user_id = ?"
+    try:
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(query, (new_episode_number, user_id))
+            print(f"Episode number for user_id {user_id} set to {new_episode_number}")
+    except Exception as e:
+        print(f"Failed to set episode number: {e}")
 
 
 # User Settings Functions --------------------------------------------------------------------------------------------------------------------------------

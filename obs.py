@@ -4,7 +4,7 @@ from obsws_python import ReqClient
 from obsws_python import EventClient
 from pathlib import Path
 import time
-from automation import *
+from automation import upload_image_to_imgur, automate_thumbnail_with_photopea
 from database import *
 from AppState import AppState
 
@@ -149,18 +149,23 @@ class OBScontroller:
 
         time.sleep(2)
 
+        ep_num_temp = self.state.get_episode()
+        ep_num_temp -= 1
+
         face_vid_path = Path(self.last_recording_path).with_name(
-            f"ep{self.state.get_episode()}_face.mkv"
+            f"ep{ep_num_temp}_face.mkv"
         )
         
         for _ in range(5):
             try:
                 Path(self.last_recording_path).rename(face_vid_path)
                 print(f"Thumbnail face video saved as {face_vid_path}")
+                self.extract_best_frame(face_vid_path)
                 break
             except Exception as e:
                 print(f"Rename failed: {e}")
                 time.sleep(0.5)
+        
         
             
     
@@ -168,6 +173,9 @@ class OBScontroller:
         """
         Extract sharpest frame using Laplacian variance
         """
+
+        ep_num_temp = self.state.get_episode()
+        ep_num_temp -= 1
 
         cap = cv2.VideoCapture(str(video_path))
         best_frame = None
@@ -191,17 +199,19 @@ class OBScontroller:
         cap.release()
 
         if best_frame is not None:
-            output_path = Path("Screenshots") / f"ep{self.state.get_episode()}_face_frame.png"
+            output_path = Path("Screenshots") / f"ep{ep_num_temp}_face_frame.png"
             output_path.parent.mkdir(exist_ok=True)
             cv2.imwrite(str(output_path), best_frame)
             print(f"Best thumbnail frame saved to {output_path}")
             upload_image_to_imgur(output_path)
             time.sleep(1)
-            automate_thumbnail_with_photopea(output_path, self.state.episode_num)
+            automate_thumbnail_with_photopea(output_path, ep_num_temp)
             
         
         else:
             print("No frame extracted")
+        
+
             
 
     def get_all_scenes(self):

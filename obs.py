@@ -5,6 +5,7 @@ from obsws_python import EventClient
 from pathlib import Path
 import time
 from automation import upload_image_to_imgur, automate_thumbnail_with_photopea
+from transcription import transcribe_audio
 from database import *
 from AppState import AppState
 
@@ -128,7 +129,6 @@ class OBScontroller:
             
 
         print("File Renaming Method Called")
-
         self.thumbnail_creation_process()
 
 
@@ -203,7 +203,6 @@ class OBScontroller:
             output_path.parent.mkdir(exist_ok=True)
             cv2.imwrite(str(output_path), best_frame)
             print(f"Best thumbnail frame saved to {output_path}")
-            upload_image_to_imgur(output_path)
             time.sleep(1)
             automate_thumbnail_with_photopea(output_path, ep_num_temp)
             

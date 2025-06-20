@@ -7,4 +7,5 @@ screenshots/
 database.db
 __pycache__
 *.pyc
+transcripts/
 

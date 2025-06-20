@@ -20,7 +20,7 @@ I started recording Chess game videos 5-7x a week as a way of measuring and shar
 - 📝 **Transcription Generator**:
   - Uses Whisper to transcribe videos.
   - Saves transcript files to a `transcripts/` directory.
-- 🧠 **Future Plans**: Designed to support auto title/description generation and timestamp tagging using WhisperX.
+- 🧠 **Future Plans**: Designed to support auto title/description generation and timestamp tagging using Whisper
 
 ## Technologies Used
 

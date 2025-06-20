@@ -1,6 +1,14 @@
 # ContentBuddy
 
-**ContentBuddy** is a desktop Python application designed to automate and streamline the workflow of recording and uploading YouTube videos, especially for chess content creators. It integrates with OBS Studio via WebSockets, manages video file naming and episode tracking, captures thumbnail poses using OpenCV, and automates thumbnail creation using Photopea and Imgur. It also features Whisper-powered transcription for future use in title, description, and timestamp generation.
+**ContentBuddy** is a desktop Python application designed to automate and streamline the workflow of recording and uploading YouTube videos, specifically tailored to people working on a series. It integrates with OBS Studio via WebSockets, manages video file naming and episode tracking, captures thumbnail poses using OpenCV, and automates thumbnail creation using Photopea and Imgur. It also features Whisper powered transcription for future use in title, description, and timestamp generation.
+
+
+How I'm Using it:
+
+https://www.youtube.com/@ojedi_chess
+
+I started recording Chess game videos 5-7x a week as a way of measuring and sharing my progress. Being my first time uploading consistently to YouTube, I realized how many tedious some of the tasks were that go into uploading videos, especially with creating videos. So I began developing ContentBuddy as a means of reducing the workload and saving time.
+
 
 ## Features
 
@@ -12,11 +20,11 @@
 - 📝 **Transcription Generator**:
   - Uses Whisper to transcribe videos.
   - Saves transcript files to a `transcripts/` directory.
-- 🧠 **Future Expansion**: Designed to support auto title/description generation and timestamp tagging using WhisperX.
+- 🧠 **Future Plans**: Designed to support auto title/description generation and timestamp tagging using WhisperX.
 
 ## Technologies Used
 
-- Python 3.x
+- Python
 - Dear PyGui for GUI
 - OBS WebSocket via `obsws-python`
 - SQLite for local storage
@@ -30,23 +38,20 @@
 
 ```bash
 pip install -r requirements.txt
-Set Up .env File
+Set Up .env File with the following:
 
-Create a .env file in your root directory:
+    IMGUR_CLIENT_ID=your_imgur_client_id
 
-ini
-Always show details
-
-Copy
-IMGUR_CLIENT_ID=your_imgur_client_id
 Ensure OBS Studio is Installed
 
 Download and install OBS Studio and enable WebSocket support (port 4455).
 
+Create config.toml file with following format:
+    [connection]
+    host = "localhost"
+    port = 4455
+    password = "###############"
+
 Run the App
 
-bash
-Always show details
-
-Copy
-python main.py
+    python main.py

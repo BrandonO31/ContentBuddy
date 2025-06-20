@@ -8,4 +8,6 @@ database.db
 __pycache__
 *.pyc
 transcripts/
+.env
+delete_image.py
 

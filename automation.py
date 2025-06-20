@@ -111,7 +111,7 @@ try {{
     var desc01 = new ActionDescriptor;
     var idsampleAllLayers = stringIDToTypeID("sampleAllLayers");
     desc01.putBoolean(idsampleAllLayers, false );
-    executeAction (idautoCutout, descO1, DialogModes.NO);
+    executeAction (idautoCutout, desc01, DialogModes.NO);
         
     //var desc = new ActionDescriptor();
     //desc.putBoolean(stringIDToTypeID("sampleAllLayers"), false);
@@ -158,16 +158,16 @@ def upload_image_to_imgur(image_path: str) -> str:
 
 
     
-def main():
-    screenshot_path = "Screenshots/ep51_face_frame.png"
-    episode_num = 51
+# def main():
+#     screenshot_path = "Screenshots/ep51_face_frame.png"
+#     episode_num = 51
 
-    try:
-        print("Starting thumbnail automation...")
-        automate_thumbnail_with_photopea(screenshot_path, episode_num)
-    except Exception as e:
-        print(f"Error during thumbnail automation: {e}")
+#     try:
+#         print("Starting thumbnail automation...")
+#         automate_thumbnail_with_photopea(screenshot_path, episode_num)
+#     except Exception as e:
+#         print(f"Error during thumbnail automation: {e}")
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
